@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get('/', getDevices);
 router.post('/', addDevice);
-router.patch('/', editDevice);
+router.put('/:id', editDevice);
 router.delete('/:id', deleteDevice);
 
 

@@ -31,6 +31,22 @@ const getInvoiceDetails = async (req, res) => {
     }
 }
 
+const searchInvoices = async (req, res) => {
+    if (!req.perms.getInvoices && !(req.perms.getInvoices)) return res.status(403).send('Not authorized.');
+    
+    try {    
+        const p = await pool.connect();
+        const rows = await p.request()
+            .input('id', id)
+            .execute('searchInvoices')
+    
+        res.send(rows.recordset)
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('An error has occured.');
+    }
+}
+
 const addInvoice = async (req, res) => {
     if (!req.perms.addInvoices && !(req.perms.getInvoices)) return res.status(403).send('Not authorized.');
     const customerID = req.body.customerID;

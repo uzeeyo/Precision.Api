@@ -27,8 +27,8 @@ app.use(getPerms)
 app.use('/api/customers', customers);
 app.use('/api/devices', devices);
 app.use('/api/invoices', invoices);
-app.use('/api/tickets', tickets)
-app.use('/api/register', register)
+app.use('/api/tickets', tickets);
+app.use('/api/register', register);
 
 //Start server
 app.listen(PORT, () => console.log('Server is running.'));

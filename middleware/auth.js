@@ -31,7 +31,7 @@ async function validatePassword(req, res, next) {
     }
 }
 
-//Generates token
+//Generates token   
 //2nd step of login
 async function generateToken(req, res) {
     const user = await getUser(req.userID);
@@ -40,7 +40,7 @@ async function generateToken(req, res) {
     }, process.env.JWT_SECRET_KEY, {
         expiresIn: '1hr'
     })
-    res.send(token);
+    res.send({token});
 }
 
 async function validateToken(req, res, next) {

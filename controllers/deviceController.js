@@ -36,13 +36,14 @@ const addDevice = async (req, res) => {
 
 const editDevice = async (req, res) => {
     if (req.perms.editDevices != true || req.perms.editDevices == undefined) return res.status(403).send('Not authorized.');
+    const deviceID = device.deviceID;
     const device = req.body;
-    if (!(device.deviceID && device.make && device.model && device.osType)) return res.status(400).send('Invalid input.');
+    if (!(device.make && device.model && device.osType)) return res.status(400).send('Invalid input.');
 
     try {
         const p = await pool.connect();
         const affected = await p.request()
-            .input('deviceID', device.deviceID)
+            .input('deviceID', deviceID)
             .input('make', device.make)
             .input('model', device.model)
             .input('ostype', device.osType)

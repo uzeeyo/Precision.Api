@@ -8,7 +8,7 @@ const getCustomers = async (req, res) => {
         const p = await pool.connect();
         const rows = await p.request()
             .execute('getCustomers')
-        res.send(rows);
+        res.send(rows.recordset);
     } catch (err) {
         console.log(err);
         return res.status(500).send('An error has occured.');
@@ -26,7 +26,7 @@ const getCustomerDetails = async (req, res) => {
             .input('id', id)
             .execute('getCustomerDetails')
 
-        res.send(rows);
+        res.send(rows.recordset[0]);
     } catch (err) {
         console.log(err);
         return res.status(500).send('An error has occured.');
@@ -67,7 +67,7 @@ const addCustomer = async (req, res) => {
             .input('eAddress', customer.emailAddress)
             .execute('addCustomer')
     
-            res.send(`${affected.rowsAffected} customer added.`);
+            res.status(201).send(`${affected.rowsAffected} customer added.`);
     } catch (err) {
         console.log(err);
         return res.status(500).send('An error has occured.');
@@ -76,6 +76,7 @@ const addCustomer = async (req, res) => {
 
 const editCustomer = async (req, res) => {
     if (req.perms.editCustomers != true || !req.perms.editCustomers) return res.status(403).send('Not authorized.');
+    const customerID = req.params.id;
     const customer = req.body;
     if (!(customer.customerID && customer.firstName && customer.lastName && customer.phoneNumber && customer.emailAddress)) return res.status(400).send('Invald input.')
     if (!validator.isEmail(customer.emailAddress)) return res.status(400).send('Invalid email.');

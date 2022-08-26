@@ -6,7 +6,7 @@ router.get('/', getCustomers);
 router.get('/:id', getCustomerDetails);
 router.get('/:id/devices', getCustomerDevices);
 router.post('/', addCustomer);
-router.patch('/', editCustomer);
+router.put('/:id', editCustomer);
 router.delete('/:id', deleteCustomer);
 
 module.exports = router;

@@ -1,4 +1,3 @@
-const { json } = require("express");
 const { pool } = require("../config/dbconfig");
 
 const getTickets = async (req, res) => {
@@ -150,7 +149,7 @@ const addTicketNote = async (req, res) => {
             .input('text', note.text)
             .input('createdAt', new Date())
             .execute('addTicketNote')
-            res.send(`${affected.rowsAffected} product added to ticket.`);
+            res.send(`${affected.rowsAffected} note added to ticket.`);
     } catch (err) {
         console.log(err);
         return res.status(500).send('An error has occured.');
@@ -159,17 +158,36 @@ const addTicketNote = async (req, res) => {
 
 const addTicketDevice = async (req, res) => {
     if (!req.perms.addTickets) return res.status(403).send('Not authorized.');
+    const device = req.body;
+    if (!(device.ticketID && device.deviceID)) return res.status(400).send('Invalid input.');
+
+    try {
+        const p = await pool.connect();
+        const affected = await p.request()
+            .input('ticketID', device.ticketID)
+            .input('deviceID', device.deviceID)
+            .execute('addTicketDevice')
+            res.send(`${affected.rowsAffected} device added to ticket.`);
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send('An error has occured.');
+    }
+}
+
+const editTicketNote = async (req, res) => {
+    if (!req.perms.editTickets) return res.status(403).send('Not authorized.');
+    const noteID = req.params.id;
     const note = req.body;
-    if (!(note.ticketID && note.deviceID)) return res.status(400).send('Invalid input.');
+    if (!(note.text)) return res.status(400).send('Invalid input.');
 
 
     try {
         const p = await pool.connect();
         const affected = await p.request()
-            .input('ticketID', note.ticketID)
-            .input('deviceID', note.deviceID)
+            .input('noteID', noteID)
+            .input('text', note.text)
             .execute('addTicketDevice')
-            res.send(`${affected.rowsAffected} device added to ticket.`);
+            res.send(`${affected.rowsAffected} note edited.`);
     } catch (err) {
         console.log(err);
         return res.status(500).send('An error has occured.');
@@ -184,6 +202,7 @@ const deleteTicket = async (req, res) => {
         const p = await pool.connect();
         const affected = await p.request()
             .input('ticketID', note.ticketID)
+            .input('archiveTime', new Date())
             .execute('deleteTicket')
             res.send(`${affected.rowsAffected} ticket deleted.`);
     } catch (err) {
@@ -224,4 +243,4 @@ const deleteTicketDevice = async (req, res) => {
     }
 }
 
-module.exports = { getTickets, getTicketsByCustomer, getTicketDetails, addTicket, addTicketNote, addTicketDevice, deleteTicket, deleteTicketNote, deleteTicketDevice }
+module.exports = { getTickets, getTicketsByCustomer, getTicketDetails, addTicket, addTicketNote, addTicketDevice, editTicketNote, deleteTicket, deleteTicketNote, deleteTicketDevice }

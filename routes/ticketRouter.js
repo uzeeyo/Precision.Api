@@ -9,7 +9,8 @@ const {
     addTicketDevice, 
     deleteTicket, 
     deleteTicketNote, 
-    deleteTicketDevice 
+    deleteTicketDevice, 
+    editTicketNote
 } = require('../controllers/ticketController.js');
 
 const router = express.Router();
@@ -20,6 +21,7 @@ router.get('/customer/:id', getTicketsByCustomer);
 router.post('/', addTicket);
 router.post('/notes', addTicketNote);
 router.post('/devices', addTicketDevice);
+router.put('/notes/:id', editTicketNote)
 router.delete('/', deleteTicket);
 router.delete('/notes/:id', deleteTicketNote);
 router.delete('/devices/:id', deleteTicketDevice);
